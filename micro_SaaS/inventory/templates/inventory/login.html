@@ -1,0 +1,20 @@
+{% extends "inventory/base.html" %}
+{% block title %}Log In{% endblock title %}
+{% block content %}
+
+<form method='post'>
+    {% csrf_token %}
+    <input name="username"></input>
+    <input name="password"></input>
+    <button type='submit'></button>
+</form>
+
+
+
+{% endblock content %}
+
+
+
+
+
+

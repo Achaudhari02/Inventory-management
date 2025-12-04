@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
-        widget=forms.EmailInput(attr={
+        widget=forms.EmailInput(attrs={
             'class': 'form-control',
             'placeholder': 'Email'
         })
@@ -14,16 +14,16 @@ class SignUpForm(UserCreationForm):
     first_name = forms.CharField(
         max_length=100,
         required=True,
-        widget=forms.TextInput(attr={
+        widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'First Name0'
+            'placeholder': 'First Name'
         })
     )
 
     last_name = forms.CharField(
         max_length=100,
         required=True,
-        widget=forms.TextInput(attr={
+        widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Last Name'
         })
