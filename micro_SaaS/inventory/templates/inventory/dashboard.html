@@ -2,10 +2,24 @@
 
 {% block content %}
 
-<h1>Dashboard: {{business.name}} </h1>
-<h2> Owned by: {{business.owner}} </h2>
-<h2>Address: {{business.address}} </h2>
-<h2>Created at: {{business.created_at}}</h2>
+<h1>Dashboard: {{current_business.name}} </h1>
+<h2> Owned by: {{current_business.owner}} </h2>
+<h2>Address: {{current_business.address}} </h2>
+<h2>Created at: {{current_business.created_at}}</h2>
+<h2>Total Products: {{total_products}}</h2>
+<h2>Total Stock: {{total_stock_value}}</h2>
+<h2>Low Stock Products: {{low_stock_count}}</h2>
+{% for product in low_stock_products  %}
+
+    <ul>
+
+        {{product.name}}
+    </ul>
+
+{% endfor %}
+
+<a href="{% url 'business-list' %}"> Businesses </a>
+
 {% endblock content %}
 
 
