@@ -4,7 +4,8 @@ from django.contrib import messages
 from .forms import SignUpForm, BusinessForm
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from .models import Business
+from .models import Business, Product, StockTransaction
+from django.db.models import Q, F
 
 # Create your views here.
 
@@ -87,6 +88,51 @@ def business_switch_view(request, business_id):
 
 @login_required
 def dashboard_view(request):
-    business = get_object_or_404(Business, id=request.session["current_business_id"], owner=request.user)
-    return render(request, 'inventory/dashboard.html', {'business': business})
+
+    business_id = request.session.get("current_business_id")
+
+    if not business_id:
+        businesses = Business.objects.filter(owner=request.user)
+        if businesses.exists():
+            request.session["current_business_id"] = businesses.first().id
+            business_id = businesses.first().id
+        else:
+            return redirect('business_create')
+    
+    try:
+        current_business = Business.objects.get(
+            id=business_id,
+            owner=request.user
+        )
+    except Business.DoesNotExist:
+        del request.session['current_business_id']
+        return redirect('dashboard')
+    
+    products = Product.objects.filter(business=current_business)
+
+    low_stock_products = products.filter(
+        current_quantity__lte = F('reorder_level')
+    ) 
+
+    recent_transactions = StockTransaction.objects.filter(
+        product__business = current_business
+    ).select_related('product').order_by('-created_at')[:10]
+
+    total_products = products.count()
+    low_stock_count = low_stock_products.count()
+    total_stock_value = 0
+    for each in products:
+        total_stock_value += each.current_quantity
+
+    context = {
+
+        'current_business': current_business,
+        'low_stock_products': low_stock_products,
+        'total_products': total_products, 
+        'low_stock_count': low_stock_count,
+        'total_stock_value': total_stock_value,
+        'recent_transactions': recent_transactions, 
+    }
+
+    return render(request, 'inventory/dashboard.html', context)
 

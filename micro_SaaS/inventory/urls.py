@@ -9,5 +9,5 @@ urlpatterns = [
     path('logout/',views.logout_view,name='logout'),
     path('business/list', views.business_list_view, name='business-list'),
     path('business/switch/<int:business_id>',views.business_switch_view,name="business-switch"),
-    path('business/create', views.business_create_view, name='business-create'),
+    path('business/create', views.business_create_view, name='business_create'),
 ]
