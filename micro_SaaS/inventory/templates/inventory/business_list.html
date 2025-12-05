@@ -1,0 +1,13 @@
+
+{% extends "inventory/base.html" %}
+
+{% block content %}
+
+        {% for business in businesses %} 
+            <ul>
+                <a href="{% url 'business-switch' business.id %}"> {{business.name}} </a>
+            </ul>
+        {% endfor %} 
+
+
+{% endblock content %}
