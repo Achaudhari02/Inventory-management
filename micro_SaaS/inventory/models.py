@@ -14,6 +14,14 @@ class Business(models.Model):
         related_name="business"
     )
 
+    class Meta: 
+        constraints = [
+            models.UniqueConstraint(
+                fields= ["name"],
+                name= "Unique name per business"
+            )
+        ]
+
     def __str__(self):
         return f"name: {self.name} created at: {self.created_at}"
 
