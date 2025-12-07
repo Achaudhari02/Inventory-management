@@ -1,0 +1,27 @@
+{% extends "inventory/base.html" %}
+
+
+{% block title %}Record Transaction{% endblock title %}
+
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type='submit'>SUBMIT</button>
+</form>
+
+<form action="{% url 'dashboard' %}" method="get">
+
+    <button type='submit'>BACK</button>
+</form>
+
+<h1>Transactions:</h1>
+
+{% for tran in all_transactions %}
+
+    <h4> {{tran}} </h4>
+{% endfor %} 
+
+{% endblock content %}
