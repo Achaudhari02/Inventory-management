@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Business
+from .models import Business, Product
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(
@@ -47,3 +47,11 @@ class BusinessForm(forms.ModelForm):
     class Meta:
         model = Business
         fields = ('name','address')
+
+
+class ProductForm(forms.ModelForm):
+
+    class Meta:
+        model = Product
+        fields = ('name','sku','category','current_quantity','reorder_level','unit','supplier_name')
+     
