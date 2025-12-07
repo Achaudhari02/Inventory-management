@@ -1,0 +1,35 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}Products{% endblock title %}
+
+{% block content %}
+
+<form method='get'>
+
+    <label for='search_query'>Search</label>
+    <input name='search_query' value= {{search}}></input>
+    <button type='submit'>SUBMIT</button>
+
+    <select name ='category_query'>
+        <option value=''>ALL</option>
+        {% for cat in categories %}
+            <option value={{cat}} {% if cat == category_query %} selected {% endif %}>{{cat}}</option>
+        {% endfor %}
+    </select>   
+
+    {% for product in products  %}
+    
+        <h2> {{product.name}} </h2>
+        <a href="{% url 'product_update' product.id %}">UPDATE</a>
+        <a href="{% url 'product_delete' product.id %}">DELETE</a>
+
+    {% endfor %}
+</form>
+
+<h4>
+    <a href="{% url 'product_add' %}">Add Product</a>
+</h4>
+
+{% endblock content %}
+
+

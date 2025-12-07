@@ -1,0 +1,21 @@
+{% extends "inventory/base.html" %}
+
+
+{% block content %}
+
+<h1>Are you sure you want to delete the following product:</h1>
+<h2>  {{product}} from {{business}} </h2>
+
+<form method="post">
+    {% csrf_token %}
+    <button type='submit'>YES</button>
+</form>
+
+<form action="{% url 'product_list' %}" method='get'>
+
+    
+    <button type='submit'>NO</button>
+
+</form>
+
+{% endblock content %}
