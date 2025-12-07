@@ -9,16 +9,10 @@
 <h2>Total Products: {{total_products}}</h2>
 <h2>Total Stock: {{total_stock_value}}</h2>
 <h2>Low Stock Products: {{low_stock_count}}</h2>
-{% for product in low_stock_products  %}
+<div><a href="{% url 'product_list' %}">View Products</a></div>
 
-    <ul>
 
-        {{product.name}}
-    </ul>
-
-{% endfor %}
-
-<a href="{% url 'business-list' %}"> Businesses </a>
+<a href="{% url 'business_list' %}"> Businesses </a>
 
 {% endblock content %}
 

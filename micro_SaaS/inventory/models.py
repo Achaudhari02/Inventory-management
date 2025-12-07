@@ -54,6 +54,11 @@ class Product(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
+                fields= ["business", "name"],
+                name = "unique_name_per_business"
+            ),
+            
+            models.UniqueConstraint(
                 fields= ["business", "sku"],
                 name = "unique_sku_per_business"
             )

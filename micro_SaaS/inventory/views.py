@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages 
-from .forms import SignUpForm, BusinessForm
+from .forms import SignUpForm, BusinessForm, ProductForm
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import Business, Product, StockTransaction
@@ -136,3 +136,127 @@ def dashboard_view(request):
 
     return render(request, 'inventory/dashboard.html', context)
 
+
+@login_required
+
+def product_list_view(request):
+    business_id = request.session['current_business_id']
+
+    if not business_id:
+        messages.warning(request, "Please select or create a business first.")
+        redirect('dashboard')
+
+    current_business = get_object_or_404(Business,id=business_id,owner=request.user)
+
+    products = Product.objects.filter(business=current_business)
+
+    search_query = request.GET.get('search_query','')
+    category_query = request.GET.get('category_query','')
+
+    if search_query:
+        products = products.filter(
+            Q(name__icontains=search_query) |
+            Q(sku__icontains=search_query) |
+            Q(supplier_name__icontains=search_query)
+        )
+
+    if category_query: 
+        products = products.filter(
+            category=category_query
+        )
+
+    categories = Product.objects.values_list('category',flat=True).distinct()
+    context = {
+        'current_business': current_business,
+        'products':products,
+        'search': search_query,
+        'categories': categories,
+        'category_query': category_query
+    }
+
+    return render(request, 'inventory/product_list.html',context)
+
+@login_required
+def product_create_view(request):
+
+    business_id = request.session["current_business_id"]
+    current_business = get_object_or_404(Business,id=business_id,owner=request.user)
+
+    if request.method == "POST":
+
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.business = current_business
+            product.save()
+            messages.success(request, f'{product.name} added successfully!')
+            return redirect('product_list')
+    else:
+        form = ProductForm()
+
+    context = {
+        'form': form,
+        'current_business': current_business,
+        'action': 'Add'
+    }
+
+    return render(request, 'inventory/product_add.html',context)
+
+@login_required
+def product_update_view(request,product_id):
+    business_id = request.session["current_business_id"]
+    
+    if not business_id:
+        messages.error(request,"Please select a business first")
+        return redirect('dashboard')
+    
+    current_business = get_object_or_404(Business,id=business_id,owner=request.user)
+
+    product = Product.objects.get(id=product_id,business=current_business)
+
+    if request.method == "POST":
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            product = form.save()
+            messages.success(request, f'{product.name} successfully updated!')
+            return redirect('dashboard')
+    else:
+        form = ProductForm(instance=product)
+    
+    context = {
+        'action': 'Update',
+        'product': product,
+        'current_business': current_business,
+        'business_id': business_id,
+        'form': form
+    }
+
+    return render(request, 'inventory/product_add.html', context) 
+
+@login_required
+def product_delete_view(request, product_id):
+
+    business_id = request.session["current_business_id"]
+
+    if not business_id:
+        messages.warning(request,"Please create or select a business first")
+        return redirect('dashboard')
+    
+    current_business = get_object_or_404(Business,id=business_id,owner=request.user)
+
+    product = get_object_or_404(Product, id=product_id, business=current_business)
+
+    if request.method == "POST":
+        product.delete()
+        messages.success(request, "Product deleted successfully!")
+        return redirect('product_list')
+    
+    context = {
+
+        'product': product.name,
+        'business': current_business
+    }
+    
+    return render(request, 'inventory/product_del_confirm.html', context)
+
+     
