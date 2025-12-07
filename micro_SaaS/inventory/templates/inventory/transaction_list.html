@@ -1,0 +1,19 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}All Transactions{% endblock title %}
+
+{% block content %}
+
+
+
+<select>
+{% for each in products  %}
+    <option value="{{each.name}}">{{each.name}}</option>
+{% endfor %}
+</select>
+
+{% endblock content %}
+
+
+
+

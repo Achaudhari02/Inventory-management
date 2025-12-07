@@ -17,11 +17,16 @@
     <button type='submit'>BACK</button>
 </form>
 
-<h1>Transactions:</h1>
+<h1>Recent Transactions:</h1>
 
 {% for tran in all_transactions %}
 
     <h4> {{tran}} </h4>
 {% endfor %} 
+
+
+<a href="{% url 'transaction_list' %}">View ALL</a>
+
+
 
 {% endblock content %}
