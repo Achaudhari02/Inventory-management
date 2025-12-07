@@ -70,6 +70,11 @@ class StockTransaction(models.Model):
         on_delete=models.CASCADE,
         related_name="transaction"
     )
+    business = models.ForeignKey(
+        Business,
+        on_delete=models.CASCADE,
+        related_name="transactions"
+    )
     
     class InOutChoices(models.TextChoices):
         IN = "In"

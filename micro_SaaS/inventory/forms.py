@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Business, Product
+from .models import Business, Product, StockTransaction
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(
@@ -55,3 +55,20 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ('name','sku','category','current_quantity','reorder_level','unit','supplier_name')
      
+class StockTransactionForm(forms.ModelForm):
+    class Meta:
+        model = StockTransaction
+        fields = ('product', 'type', 'quantity')
+        widgets = {
+            'product ': forms.Select(attrs={'class': 'form-control'}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            'quantity': forms.NumberInput(attrs={
+                'class': 'form-control', 
+                'placeholder': 'Quantity'
+                })
+        } 
+
+    def __init__(self, *args, business=None, **kwargs):
+        super(StockTransactionForm, self).__init__(*args, **kwargs)
+        if business:
+            self.fields['product'].queryset  = Product.objects.filter(business=business)
