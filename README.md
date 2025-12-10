@@ -1,5 +1,5 @@
 # Inventory Management System
-![Screenshot](assets/screenshot1.png)
+![Screenshot](assets/Screenshot1.png)
 A modern, multi-business inventory management SaaS application built with Django and Bootstrap 5.
 
 ![Django](https://img.shields.io/badge/Django-5.2.9-green)
@@ -244,4 +244,5 @@ For issues, questions, or suggestions, please open an issue on the GitHub reposi
 - Icons from [Bootstrap Icons](https://icons.getbootstrap.com/)
 
 ---
+
 
