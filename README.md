@@ -1,4 +1,4 @@
-# Brown and Co. - Inventory Management System
+# Inventory Management System
 
 A modern, multi-business inventory management SaaS application built with Django and Bootstrap 5.
 
@@ -246,3 +246,4 @@ For issues, questions, or suggestions, please open an issue on the GitHub reposi
 ---
 
 **Made with ❤️ for inventory management**
+
