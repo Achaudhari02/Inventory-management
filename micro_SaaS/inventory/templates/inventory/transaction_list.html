@@ -1,0 +1,117 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}Transaction History - Brown And Co{% endblock title %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header d-flex justify-content-between align-items-center">
+  <div>
+    <h1 class="page-title">Transaction History</h1>
+    <p class="page-subtitle">View all stock movements and transactions</p>
+  </div>
+  <a href="{% url 'transaction_add' %}" class="btn btn-success">
+    <i class="bi bi-plus-circle"></i> New Transaction
+  </a>
+</div>
+
+<!-- Filter Card -->
+<div class="modern-card mb-4">
+  <form method="get" class="row g-3">
+    <div class="col-md-6">
+      <div class="input-group">
+        <span class="input-group-text">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="text"
+          name="search"
+          class="form-control"
+          placeholder="Search by product name..."
+          value="{{ search|default:'' }}"
+        />
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <select name="type" class="form-select">
+        <option value="">All Transaction Types</option>
+        <option value="In" {% if type == 'In' %}selected{% endif %}>Stock In</option>
+        <option value="Out" {% if type == 'Out' %}selected{% endif %}>Stock Out</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">
+        <i class="bi bi-funnel"></i> Filter
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Products with Transactions -->
+{% if products %}
+<div class="modern-card">
+  <div class="card-header-modern">
+    <span><i class="bi bi-box"></i> Products with Transaction History</span>
+    <span class="badge bg-primary">{{ products|length }} Product{{ products|length|pluralize }}</span>
+  </div>
+
+  <div class="alert alert-info mb-3">
+    <i class="bi bi-info-circle"></i> Below are products that have recorded transactions. Click on a product to view its transaction details in future updates.
+  </div>
+
+  <div class="row g-3">
+    {% for product in products %}
+    <div class="col-md-6 col-lg-4">
+      <div class="modern-card bg-light mb-0">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <h6 class="mb-1">{{ product.name }}</h6>
+            <code class="small">{{ product.sku }}</code>
+          </div>
+          <span class="badge bg-secondary">{{ product.category }}</span>
+        </div>
+        <div class="text-muted small">
+          <i class="bi bi-box"></i> Current Stock: <strong>{{ product.current_quantity }} {{ product.unit }}</strong>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% else %}
+
+<!-- Empty State -->
+<div class="modern-card">
+  <div class="empty-state">
+    <div class="empty-state-icon">
+      <i class="bi bi-inbox"></i>
+    </div>
+    <div class="empty-state-title">No Transactions Yet</div>
+    <div class="empty-state-description">
+      {% if search or type %}
+      No transactions match your filter criteria. Try adjusting your filters.
+      {% else %}
+      Start recording your stock movements to see transaction history here.
+      {% endif %}
+    </div>
+    <a href="{% url 'transaction_add' %}" class="btn btn-success mt-3">
+      <i class="bi bi-plus-circle"></i> Record Your First Transaction
+    </a>
+  </div>
+</div>
+
+{% endif %}
+
+<!-- Info Note -->
+<div class="alert alert-light border mt-4">
+  <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> The transaction history feature is currently showing products with transactions. A detailed transaction log with dates, quantities, and types will be available in future updates.
+</div>
+
+{% endblock content %}
+
+
+
+

@@ -1,21 +1,191 @@
 {% extends 'inventory/base.html' %}
 
+{% block title %}Dashboard - Brown And Co{% endblock %}
+
 {% block content %}
 
-<h1>Dashboard: {{current_business.name}} </h1>
-<h2> Owned by: {{current_business.owner}} </h2>
-<h2>Address: {{current_business.address}} </h2>
-<h2>Created at: {{current_business.created_at}}</h2>
-<h2>Total Products: {{total_products}}</h2>
-<h2>Total Stock: {{total_stock_value}}</h2>
-<h2>Low Stock Products: {{low_stock_count}}</h2>
-<div><a href="{% url 'product_list' %}">View Products</a></div>
+<!-- Page Header -->
+<div class="page-header">
+  <h1 class="page-title">Dashboard</h1>
+  <p class="page-subtitle">Welcome back! Here's what's happening with your inventory.</p>
+</div>
 
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-card-icon primary">
+        <i class="bi bi-box"></i>
+      </div>
+      <div class="stat-card-value">{{ total_products }}</div>
+      <div class="stat-card-label">Total Products</div>
+    </div>
+  </div>
 
-<a href="{% url 'business_list' %}"> Businesses </a>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-card-icon success">
+        <i class="bi bi-stack"></i>
+      </div>
+      <div class="stat-card-value">{{ total_stock_value }}</div>
+      <div class="stat-card-label">Total Stock Units</div>
+    </div>
+  </div>
 
-<div>
-    <a href="{% url 'transaction_add' %}">Transactions</a>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-card-icon {% if low_stock_count > 0 %}warning{% else %}success{% endif %}">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <div class="stat-card-value">{{ low_stock_count }}</div>
+      <div class="stat-card-label">Low Stock Items</div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-card-icon primary">
+        <i class="bi bi-arrow-left-right"></i>
+      </div>
+      <div class="stat-card-value">{{ recent_transactions|length }}</div>
+      <div class="stat-card-label">Recent Transactions</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mb-4">
+  <a href="{% url 'product_add' %}" class="btn btn-primary me-2">
+    <i class="bi bi-plus-circle"></i> Add Product
+  </a>
+  <a href="{% url 'transaction_add' %}" class="btn btn-success">
+    <i class="bi bi-arrow-left-right"></i> Record Transaction
+  </a>
+</div>
+
+<!-- Main Content Grid -->
+<div class="row g-4">
+  <!-- Low Stock Products -->
+  <div class="col-12 col-lg-6">
+    <div class="modern-card">
+      <div class="card-header-modern">
+        <span><i class="bi bi-exclamation-triangle text-warning"></i> Low Stock Alert</span>
+        <a href="{% url 'product_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+      </div>
+
+      {% if low_stock_products %}
+      <div class="table-responsive">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Current</th>
+              <th>Reorder At</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in low_stock_products|slice:":5" %}
+            <tr>
+              <td>
+                <strong>{{ product.name }}</strong>
+                <div class="text-muted small">{{ product.sku }}</div>
+              </td>
+              <td>{{ product.current_quantity }} {{ product.unit }}</td>
+              <td>{{ product.reorder_level }} {{ product.unit }}</td>
+              <td>
+                {% if product.current_quantity == 0 %}
+                <span class="stock-badge critical">Out of Stock</span>
+                {% else %}
+                <span class="stock-badge low">Low Stock</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state py-4">
+        <div class="empty-state-icon">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <div class="empty-state-title">All Good!</div>
+        <div class="empty-state-description">No products are running low on stock.</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="col-12 col-lg-6">
+    <div class="modern-card">
+      <div class="card-header-modern">
+        <span><i class="bi bi-clock-history"></i> Recent Transactions</span>
+        <a href="{% url 'transaction_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+      </div>
+
+      {% if recent_transactions %}
+      <div class="list-group list-group-flush">
+        {% for transaction in recent_transactions|slice:":5" %}
+        <div class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="flex-grow-1">
+            <strong>{{ transaction.product.name }}</strong>
+            <div class="text-muted small">
+              {{ transaction.created_at|date:"M d, Y H:i" }}
+            </div>
+          </div>
+          <div class="text-end">
+            <span class="transaction-badge {% if transaction.type == 'In' %}in{% else %}out{% endif %}">
+              {% if transaction.type == 'In' %}
+              <i class="bi bi-arrow-down-circle"></i> Stock In
+              {% else %}
+              <i class="bi bi-arrow-up-circle"></i> Stock Out
+              {% endif %}
+            </span>
+            <div class="fw-bold mt-1">{{ transaction.quantity }} {{ transaction.product.unit }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state py-4">
+        <div class="empty-state-icon">
+          <i class="bi bi-inbox"></i>
+        </div>
+        <div class="empty-state-title">No Transactions Yet</div>
+        <div class="empty-state-description">Start recording your stock movements.</div>
+        <a href="{% url 'transaction_add' %}" class="btn btn-primary mt-3">
+          <i class="bi bi-plus-circle"></i> Add Transaction
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Business Info Card -->
+<div class="row g-4 mt-2">
+  <div class="col-12">
+    <div class="modern-card">
+      <div class="card-header-modern">
+        <span><i class="bi bi-building"></i> Current Business</span>
+        <a href="{% url 'business_list' %}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-repeat"></i> Switch Business
+        </a>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <p class="mb-2"><strong>Name:</strong> {{ current_business.name }}</p>
+          <p class="mb-2"><strong>Owner:</strong> {{ current_business.owner.get_full_name|default:current_business.owner.username }}</p>
+        </div>
+        <div class="col-md-6">
+          <p class="mb-2"><strong>Address:</strong> {{ current_business.address }}</p>
+          <p class="mb-2"><strong>Created:</strong> {{ current_business.created_at|date:"F d, Y" }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock content %}

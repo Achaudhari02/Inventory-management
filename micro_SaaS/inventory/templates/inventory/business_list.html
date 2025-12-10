@@ -1,18 +1,87 @@
-
 {% extends "inventory/base.html" %}
+
+{% block title %}My Businesses - Brown And Co{% endblock %}
 
 {% block content %}
 
-        {% for business in businesses %} 
-            <ul>
-                <a href="{% url 'business-switch' business.id %}"> {{business.name}} </a>
-            </ul>
-        {% endfor %} 
+<!-- Page Header -->
+<div class="page-header">
+  <h1 class="page-title">My Businesses</h1>
+  <p class="page-subtitle">Manage and switch between your businesses</p>
+</div>
 
-        <h3>
+<!-- Business Cards Grid -->
+{% if businesses %}
+<div class="row g-4">
+  {% for business in businesses %}
+  <div class="col-md-6 col-lg-4">
+    <div class="business-card {% if current_business and business.id == current_business.id %}active{% endif %}">
+      <div class="business-card-header">
+        <div class="business-card-icon">
+          <i class="bi bi-building"></i>
+        </div>
+        <h5 class="business-card-title">{{ business.name }}</h5>
+      </div>
 
-            <a href="{% url 'business_create' %}"> Add </a>
-        </h3>
+      <div class="business-card-info">
+        <i class="bi bi-geo-alt"></i> {{ business.address }}
+      </div>
 
+      <div class="business-card-info">
+        <i class="bi bi-calendar"></i> Created {{ business.created_at|date:"M d, Y" }}
+      </div>
+
+      <div class="business-card-info">
+        <i class="bi bi-person"></i> {{ business.owner.get_full_name|default:business.owner.username }}
+      </div>
+
+      {% if current_business and business.id == current_business.id %}
+      <div class="mt-3">
+        <span class="business-card-badge">
+          <i class="bi bi-check-circle"></i> Current Business
+        </span>
+      </div>
+      {% else %}
+      <div class="mt-3">
+        <a href="{% url 'business-switch' business.id %}" class="btn btn-sm btn-outline-primary w-100">
+          <i class="bi bi-arrow-repeat"></i> Switch to this Business
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- Add New Business Card -->
+  <div class="col-md-6 col-lg-4">
+    <a href="{% url 'business_create' %}" class="business-card text-center text-decoration-none" style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <div class="business-card-icon" style="background-color: #64748b;">
+        <i class="bi bi-plus-circle"></i>
+      </div>
+      <h5 class="business-card-title mt-3">Create New Business</h5>
+      <p class="text-muted small">Add another business to manage</p>
+    </a>
+  </div>
+</div>
+
+{% else %}
+
+<!-- Empty State -->
+<div class="modern-card">
+  <div class="empty-state">
+    <div class="empty-state-icon">
+      <i class="bi bi-building"></i>
+    </div>
+    <div class="empty-state-title">No Businesses Yet</div>
+    <div class="empty-state-description">
+      Get started by creating your first business to manage inventory.
+    </div>
+    <a href="{% url 'business_create' %}" class="btn btn-primary mt-3">
+      <i class="bi bi-plus-circle"></i> Create Your First Business
+    </a>
+  </div>
+</div>
+
+{% endif %}
 
 {% endblock content %}
