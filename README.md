@@ -61,7 +61,7 @@ A modern, multi-business inventory management SaaS application built with Django
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd tutorialWebapp
+   cd Inventory-management
    ```
 
 2. **Create a virtual environment**
@@ -139,7 +139,7 @@ A modern, multi-business inventory management SaaS application built with Django
 ## Project Structure
 
 ```
-tutorialWebapp/
+Inventory-management/
 ├── micro_SaaS/                    # Django project root
 │   ├── manage.py                  # Django management script
 │   ├── db.sqlite3                 # SQLite database
@@ -247,6 +247,7 @@ For issues, questions, or suggestions, please open an issue on the GitHub reposi
 - Icons from [Bootstrap Icons](https://icons.getbootstrap.com/)
 
 ---
+
 
 
 
