@@ -47,6 +47,16 @@ class BusinessForm(forms.ModelForm):
     class Meta:
         model = Business
         fields = ('name','address')
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Business Name'
+            }),
+            'address': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Business Address'
+            })
+        }
 
 
 class ProductForm(forms.ModelForm):
@@ -54,21 +64,59 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ('name','sku','category','current_quantity','reorder_level','unit','supplier_name')
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Product Name'
+            }),
+            'sku': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'SKU-12345'
+            }),
+            'category': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Electronics, Furniture, etc.'
+            }),
+            'current_quantity': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '0',
+                'min': '0'
+            }),
+            'reorder_level': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '10',
+                'min': '0'
+            }),
+            'unit': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'pcs, kg, box, etc.'
+            }),
+            'supplier_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Supplier Name (optional)'
+            })
+        }
      
 class StockTransactionForm(forms.ModelForm):
     class Meta:
         model = StockTransaction
         fields = ('product', 'type', 'quantity')
         widgets = {
-            'product ': forms.Select(attrs={'class': 'form-control'}),
-            'type': forms.Select(attrs={'class': 'form-control'}),
+            'product': forms.Select(attrs={
+                'class': 'form-select',
+                'placeholder': 'Select Product'
+            }),
+            'type': forms.Select(attrs={
+                'class': 'form-select'
+            }),
             'quantity': forms.NumberInput(attrs={
-                'class': 'form-control', 
-                'placeholder': 'Quantity'
-                })
-        } 
+                'class': 'form-control',
+                'placeholder': 'Enter quantity',
+                'min': '1'
+            })
+        }
 
     def __init__(self, *args, business=None, **kwargs):
         super(StockTransactionForm, self).__init__(*args, **kwargs)
         if business:
-            self.fields['product'].queryset  = Product.objects.filter(business=business)
+            self.fields['product'].queryset = Product.objects.filter(business=business)
