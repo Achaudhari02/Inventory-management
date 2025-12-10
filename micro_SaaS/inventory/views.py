@@ -273,8 +273,11 @@ def stock_transaction_create_view(request):
     current_business = get_object_or_404(Business, id=business_id, owner=request.user)
 
     if request.method == "POST":
+
         form = StockTransactionForm(request.POST,business=current_business)
+
         if form.is_valid():
+
             transaction = form.save(commit=False)
             transaction.business = current_business
             product = transaction.product
@@ -282,14 +285,23 @@ def stock_transaction_create_view(request):
             transaction_type = transaction.type
 
             if transaction_type == "In":
+
                 product.current_quantity += quantity
                 product.save()
                 transaction.save()
+                all_transactions = StockTransaction.objects.filter(business=current_business).order_by('-created_at')[:5]
+                return redirect('transaction_add')
+
             elif transaction_type == "Out":
+
                 if product.current_quantity >= quantity:
+
                     product.current_quantity -= quantity
                     product.save()
                     transaction.save()
+                    all_transactions = StockTransaction.objects.filter(business=current_business).order_by('-created_at')[:5]
+                    return redirect('transaction_add')
+                    
                 else:
                     messages.error(request, f'current product quantity is {product.current_quantity}')
 
@@ -298,7 +310,7 @@ def stock_transaction_create_view(request):
             # return HttpResponse(f'{transaction_type}')
 
     form = StockTransactionForm(business=current_business)
-    all_transactions = StockTransaction.objects.filter(business=current_business)
+    all_transactions = StockTransaction.objects.filter(business=current_business).order_by('-created_at')[:5]
 
     context = {
         'form': form, 
@@ -306,6 +318,30 @@ def stock_transaction_create_view(request):
     }
     
     return render(request, 'inventory/transaction_add.html', context)
+
+@login_required
+def stock_transaction_list(request):
+    business_id = request.session["current_business_id"]
+
+    if not business_id:
+        messages.error(request, "Please create or select a business!")
+        redirect('dashboard')
+
+    current_business = get_object_or_404(Business,id=business_id,owner=request.user)
+
+    search_query = request.GET.get('search','')
+    type_query = request.GET.get('type','')
+
+    all_products = StockTransaction.objects.filter(business=current_business).values_list("product",flat=True).distinct()
+    products = []
+
+    for each in all_products:
+        products.append(Product.objects.get(id=each))
+
+
+    return render(request, 'inventory/transaction_list.html',{'products':products})
+
+    
     
 
 
