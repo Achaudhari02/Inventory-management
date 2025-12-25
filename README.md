@@ -189,13 +189,13 @@ Inventory-management/
 
 ## Features Roadmap
 
-- [ ] Export functionality (CSV/Excel/PDF)
-- [ ] Advanced reporting and analytics
-- [ ] Multi-user collaboration per business
-- [ ] Email notifications for low stock
-- [ ] Barcode/QR code support
-- [ ] Mobile app
-- [ ] API endpoints (REST/GraphQL)
+-  Export functionality (CSV/Excel/PDF)
+-  Advanced reporting and analytics
+-  Multi-user collaboration per business
+-  Email notifications for low stock
+-  Barcode/QR code support
+-  Mobile app
+-  API endpoints (REST/GraphQL)
 
 ## Development
 
@@ -217,7 +217,7 @@ python manage.py migrate
 
 ## Security Notes
 
-⚠️ **Important:** This is a development setup. For production deployment:
+ **Important:** This is a development setup. For production deployment:
 
 1. Set `DEBUG = False` in settings.py
 2. Change `SECRET_KEY` to a secure random value
@@ -247,6 +247,7 @@ For issues, questions, or suggestions, please open an issue on the GitHub reposi
 - Icons from [Bootstrap Icons](https://icons.getbootstrap.com/)
 
 ---
+
 
 
 
