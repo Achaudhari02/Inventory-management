@@ -93,7 +93,7 @@ class StockTransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         business = self.get_business()
-        queryset = StockTransaction.objects.filter(business=business).select_related('product')
+        queryset = StockTransaction.objects.filter(product__business=business).select_related('product')
 
         # Support filtering by type
         transaction_type = self.request.query_params.get('type')
@@ -103,8 +103,8 @@ class StockTransactionViewSet(viewsets.ModelViewSet):
         return queryset.order_by('-created_at')
 
     def perform_create(self, serializer):
-        business = self.get_business()
-        transaction = serializer.save(business=business)
+        self.get_business()  # Validates business ownership
+        transaction = serializer.save()
 
         # Update product quantity
         product = transaction.product

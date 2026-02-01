@@ -68,14 +68,9 @@ class StockTransaction(models.Model):
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
-        related_name="transaction"
-    )
-    business = models.ForeignKey(
-        Business,
-        on_delete=models.CASCADE,
         related_name="transactions"
     )
-    
+
     class InOutChoices(models.TextChoices):
         IN = "In"
         OUT = "Out"

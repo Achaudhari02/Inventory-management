@@ -45,7 +45,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class StockTransactionSerializer(serializers.ModelSerializer):
     product_name = serializers.ReadOnlyField(source='product.name')
-    business = serializers.ReadOnlyField(source='business.id')
+    business = serializers.ReadOnlyField(source='product.business.id')
 
     class Meta:
         model = StockTransaction
