@@ -1,8 +1,5 @@
-{% extends "inventory/base.html" %}
-
-{% block title %}Record Transaction - Brown And Co{% endblock title %}
-
-{% block content %}
+{% extends "inventory/base.html" %} {% block title %}Record Transaction - Brown
+And Co{% endblock title %} {% block content %}
 
 <!-- Page Header -->
 <div class="page-header">
@@ -28,41 +25,40 @@
           <label for="{{ form.product.id_for_label }}" class="form-label">
             <i class="bi bi-box"></i> Product <span class="text-danger">*</span>
           </label>
-          {{ form.product }}
-          {% if form.product.errors %}
+          {{ form.product }} {% if form.product.errors %}
           <div class="text-danger small mt-1">{{ form.product.errors }}</div>
           {% endif %}
         </div>
 
         <div class="mb-3">
           <label class="form-label">
-            <i class="bi bi-arrow-left-right"></i> Transaction Type <span class="text-danger">*</span>
+            <i class="bi bi-arrow-left-right"></i> Transaction Type
+            <span class="text-danger">*</span>
           </label>
-          {{ form.type }}
-          {% if form.type.errors %}
+          {{ form.type }} {% if form.type.errors %}
           <div class="text-danger small mt-1">{{ form.type.errors }}</div>
           {% endif %}
           <div class="form-text">
-            <span class="badge bg-success me-2">Stock In</span> Receiving new stock
-            <span class="badge bg-danger ms-3 me-2">Stock Out</span> Selling or using stock
+            <span class="badge bg-success me-2">Stock In</span> Receiving new
+            stock
+            <span class="badge bg-danger ms-3 me-2">Stock Out</span> Selling or
+            using stock
           </div>
         </div>
 
         <div class="mb-3">
           <label for="{{ form.quantity.id_for_label }}" class="form-label">
-            <i class="bi bi-123"></i> Quantity <span class="text-danger">*</span>
+            <i class="bi bi-cart2"></i> Quantity
+            <span class="text-danger">*</span>
           </label>
-          {{ form.quantity }}
-          {% if form.quantity.errors %}
+          {{ form.quantity }} {% if form.quantity.errors %}
           <div class="text-danger small mt-1">{{ form.quantity.errors }}</div>
           {% endif %}
         </div>
 
         <!-- Non-field Errors -->
         {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-          {{ form.non_field_errors }}
-        </div>
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
         {% endif %}
 
         <!-- Action Buttons -->
@@ -83,13 +79,19 @@
     <div class="modern-card">
       <div class="card-header-modern">
         <span><i class="bi bi-clock-history"></i> Recent Transactions</span>
-        <a href="{% url 'transaction_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+        <a
+          href="{% url 'transaction_list' %}"
+          class="btn btn-sm btn-outline-primary"
+          >View All</a
+        >
       </div>
 
       {% if all_transactions %}
       <div class="list-group list-group-flush">
         {% for tran in all_transactions|slice:":10" %}
-        <div class="list-group-item d-flex justify-content-between align-items-start">
+        <div
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
           <div class="flex-grow-1">
             <strong>{{ tran.product.name }}</strong>
             <div class="text-muted small">
@@ -97,14 +99,16 @@
             </div>
           </div>
           <div class="text-end">
-            <span class="transaction-badge {% if tran.type == 'In' %}in{% else %}out{% endif %}">
+            <span
+              class="transaction-badge {% if tran.type == 'In' %}in{% else %}out{% endif %}"
+            >
               {% if tran.type == 'In' %}
-              <i class="bi bi-arrow-down-circle"></i> In
-              {% else %}
-              <i class="bi bi-arrow-up-circle"></i> Out
-              {% endif %}
+              <i class="bi bi-arrow-down-circle"></i> In {% else %}
+              <i class="bi bi-arrow-up-circle"></i> Out {% endif %}
             </span>
-            <div class="fw-bold mt-1">{{ tran.quantity }} {{ tran.product.unit }}</div>
+            <div class="fw-bold mt-1">
+              {{ tran.quantity }} {{ tran.product.unit }}
+            </div>
           </div>
         </div>
         {% endfor %}
@@ -115,7 +119,9 @@
           <i class="bi bi-inbox"></i>
         </div>
         <div class="empty-state-title">No Transactions Yet</div>
-        <div class="empty-state-description">Your transaction history will appear here.</div>
+        <div class="empty-state-description">
+          Your transaction history will appear here.
+        </div>
       </div>
       {% endif %}
     </div>

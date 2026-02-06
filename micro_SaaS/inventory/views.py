@@ -256,7 +256,7 @@ def product_delete_view(request, product_id):
     
     context = {
 
-        'product': product.name,
+        'product': product,
         'business': current_business
     }
     
@@ -334,14 +334,19 @@ def stock_transaction_list(request):
     search_query = request.GET.get('search','')
     type_query = request.GET.get('type','')
 
-    all_products = StockTransaction.objects.filter(product__business=current_business).values_list("product",flat=True).distinct()
-    products = []
+    transactions = StockTransaction.objects.filter(product__business=current_business).order_by('-created_at')
 
-    for each in all_products:
-        products.append(Product.objects.get(id=each))
+    if search_query:
+        transactions = transactions.filter(product__name__icontains=search_query)
 
+    if type_query:
+        transactions = transactions.filter(type=type_query)
 
-    return render(request, 'inventory/transaction_list.html',{'products':products})
+    return render(request, 'inventory/transaction_list.html', {
+        'transactions': transactions,
+        'search': search_query,
+        'type': type_query,
+    })
 
     
     

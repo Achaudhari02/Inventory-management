@@ -18,7 +18,7 @@ class Business(models.Model):
     class Meta: 
         constraints = [
             models.UniqueConstraint(
-                fields= ["name"],
+                fields= ["name","owner"],
                 name= "Unique name per business"
             )
         ]

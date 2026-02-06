@@ -49,32 +49,40 @@
   </form>
 </div>
 
-<!-- Products with Transactions -->
-{% if products %}
-<div class="modern-card">
-  <div class="card-header-modern">
-    <span><i class="bi bi-box"></i> Products with Transaction History</span>
-    <span class="badge bg-primary">{{ products|length }} Product{{ products|length|pluralize }}</span>
-  </div>
-
-  <div class="row g-3">
-    {% for product in products %}
-    <div class="col-md-6 col-lg-4">
-      <div class="modern-card bg-light mb-0">
-        <div class="d-flex justify-content-between align-items-start mb-2">
-          <div>
-            <h6 class="mb-1">{{ product.name }}</h6>
-            <code class="small">{{ product.sku }}</code>
-          </div>
-          <span class="badge bg-secondary">{{ product.category }}</span>
-        </div>
-        <div class="text-muted small">
-          <i class="bi bi-box"></i> Current Stock: <strong>{{ product.current_quantity }} {{ product.unit }}</strong>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
-  </div>
+<!-- Transaction History Table -->
+{% if transactions %}
+<div class="modern-table">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Type</th>
+        <th>Quantity</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tran in transactions %}
+      <tr>
+        <td>
+          <strong>{{ tran.product.name }}</strong>
+          <div class="text-muted small">{{ tran.product.sku }}</div>
+        </td>
+        <td>
+          <span class="transaction-badge {% if tran.type == 'In' %}in{% else %}out{% endif %}">
+            {% if tran.type == 'In' %}
+            <i class="bi bi-arrow-down-circle"></i> In
+            {% else %}
+            <i class="bi bi-arrow-up-circle"></i> Out
+            {% endif %}
+          </span>
+        </td>
+        <td>{{ tran.quantity }} {{ tran.product.unit }}</td>
+        <td>{{ tran.created_at|date:"M d, Y H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 {% else %}
@@ -85,7 +93,7 @@
     <div class="empty-state-icon">
       <i class="bi bi-inbox"></i>
     </div>
-    <div class="empty-state-title">No Transactions Yet</div>
+    <div class="empty-state-title">No Transactions Found</div>
     <div class="empty-state-description">
       {% if search or type %}
       No transactions match your filter criteria. Try adjusting your filters.
