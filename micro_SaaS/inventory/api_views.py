@@ -36,10 +36,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    """
-    CRUD operations for products within a business.
-    Nested under /businesses/{business_id}/products/
-    """
+
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
@@ -51,7 +48,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         business = self.get_business()
         queryset = Product.objects.filter(business=business)
 
-        # Support filtering
         search = self.request.query_params.get('search')
         category = self.request.query_params.get('category')
 
@@ -75,17 +71,10 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 class StockTransactionViewSet(viewsets.ModelViewSet):
-    """
-    CRUD operations for stock transactions within a business.
-    Nested under /businesses/{business_id}/transactions/
 
-    Creating a transaction automatically updates product quantity:
-    - type='In': increases product.current_quantity
-    - type='Out': decreases product.current_quantity (validates sufficient stock)
-    """
     serializer_class = StockTransactionSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'head', 'options']  # No PUT/DELETE for transactions
+    http_method_names = ['get', 'post', 'head', 'options']  
 
     def get_business(self):
         business_id = self.kwargs.get('business_id')
@@ -95,7 +84,6 @@ class StockTransactionViewSet(viewsets.ModelViewSet):
         business = self.get_business()
         queryset = StockTransaction.objects.filter(product__business=business).select_related('product')
 
-        # Support filtering by type
         transaction_type = self.request.query_params.get('type')
         if transaction_type:
             queryset = queryset.filter(type=transaction_type)
@@ -103,13 +91,13 @@ class StockTransactionViewSet(viewsets.ModelViewSet):
         return queryset.order_by('-created_at')
 
     def perform_create(self, serializer):
-        self.get_business()  # Validates business ownership
+        self.get_business()  
         transaction = serializer.save()
 
-        # Update product quantity
+    
         product = transaction.product
         if transaction.type == 'In':
             product.current_quantity += transaction.quantity
-        else:  # Out
+        else:  
             product.current_quantity -= transaction.quantity
         product.save()

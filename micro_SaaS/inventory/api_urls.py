@@ -16,15 +16,12 @@ router = DefaultRouter()
 router.register(r'businesses', BusinessViewSet, basename='business')
 
 urlpatterns = [
-    # Authentication
     path('auth/register/', RegisterView.as_view(), name='api-register'),
     path('auth/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
 
-    # Business routes
     path('', include(router.urls)),
 
-    # Nested routes for products and transactions
     path(
         'businesses/<int:business_id>/products/',
         ProductViewSet.as_view({'get': 'list', 'post': 'create'}),

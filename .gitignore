@@ -5,6 +5,7 @@ __pycache__/
 *.pyd
 *.swp
 
+
 # Virtual Environment
 venv/
 env/
@@ -27,3 +28,5 @@ Thumbs.db
 # Environment / secrets
 .env
 *.env
+*.venv
+.venv

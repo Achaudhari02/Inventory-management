@@ -140,11 +140,11 @@ def dashboard_view(request):
 @login_required
 
 def product_list_view(request):
-    business_id = request.session['current_business_id']
+    business_id = request.session.get('current_business_id')
 
     if not business_id:
         messages.warning(request, "Please select or create a business first.")
-        redirect('dashboard')
+        return redirect('dashboard')
 
     current_business = get_object_or_404(Business,id=business_id,owner=request.user)
 
@@ -179,7 +179,10 @@ def product_list_view(request):
 @login_required
 def product_create_view(request):
 
-    business_id = request.session["current_business_id"]
+    business_id = request.session.get("current_business_id")
+    if not business_id:
+        messages.warning(request, "Please select or create a business first.")
+        return redirect('dashboard')
     current_business = get_object_or_404(Business,id=business_id,owner=request.user)
 
     if request.method == "POST":
@@ -204,8 +207,8 @@ def product_create_view(request):
 
 @login_required
 def product_update_view(request,product_id):
-    business_id = request.session["current_business_id"]
-    
+    business_id = request.session.get("current_business_id")
+
     if not business_id:
         messages.error(request,"Please select a business first")
         return redirect('dashboard')
@@ -236,7 +239,7 @@ def product_update_view(request,product_id):
 @login_required
 def product_delete_view(request, product_id):
 
-    business_id = request.session["current_business_id"]
+    business_id = request.session.get("current_business_id")
 
     if not business_id:
         messages.warning(request,"Please create or select a business first")
@@ -264,7 +267,7 @@ def product_delete_view(request, product_id):
 @login_required
 def stock_transaction_create_view(request):
 
-    business_id = request.session["current_business_id"]
+    business_id = request.session.get("current_business_id")
 
     if not business_id:
         messages.error(request, "Please select or create a business first!")
@@ -279,7 +282,6 @@ def stock_transaction_create_view(request):
         if form.is_valid():
 
             transaction = form.save(commit=False)
-            transaction.business = current_business
             product = transaction.product
             quantity = transaction.quantity
             transaction_type = transaction.type
@@ -289,7 +291,7 @@ def stock_transaction_create_view(request):
                 product.current_quantity += quantity
                 product.save()
                 transaction.save()
-                all_transactions = StockTransaction.objects.filter(business=current_business).order_by('-created_at')[:5]
+                all_transactions = StockTransaction.objects.filter(product__business=current_business).order_by('-created_at')[:5]
                 return redirect('transaction_add')
 
             elif transaction_type == "Out":
@@ -299,7 +301,7 @@ def stock_transaction_create_view(request):
                     product.current_quantity -= quantity
                     product.save()
                     transaction.save()
-                    all_transactions = StockTransaction.objects.filter(business=current_business).order_by('-created_at')[:5]
+                    all_transactions = StockTransaction.objects.filter(product__business=current_business).order_by('-created_at')[:5]
                     return redirect('transaction_add')
                     
                 else:
@@ -310,7 +312,7 @@ def stock_transaction_create_view(request):
             # return HttpResponse(f'{transaction_type}')
 
     form = StockTransactionForm(business=current_business)
-    all_transactions = StockTransaction.objects.filter(business=current_business).order_by('-created_at')[:5]
+    all_transactions = StockTransaction.objects.filter(product__business=current_business).order_by('-created_at')[:5]
 
     context = {
         'form': form, 
@@ -321,18 +323,18 @@ def stock_transaction_create_view(request):
 
 @login_required
 def stock_transaction_list(request):
-    business_id = request.session["current_business_id"]
+    business_id = request.session.get("current_business_id")
 
     if not business_id:
         messages.error(request, "Please create or select a business!")
-        redirect('dashboard')
+        return redirect('dashboard')
 
     current_business = get_object_or_404(Business,id=business_id,owner=request.user)
 
     search_query = request.GET.get('search','')
     type_query = request.GET.get('type','')
 
-    all_products = StockTransaction.objects.filter(business=current_business).values_list("product",flat=True).distinct()
+    all_products = StockTransaction.objects.filter(product__business=current_business).values_list("product",flat=True).distinct()
     products = []
 
     for each in all_products:

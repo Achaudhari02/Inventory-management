@@ -57,10 +57,6 @@
     <span class="badge bg-primary">{{ products|length }} Product{{ products|length|pluralize }}</span>
   </div>
 
-  <div class="alert alert-info mb-3">
-    <i class="bi bi-info-circle"></i> Below are products that have recorded transactions. Click on a product to view its transaction details in future updates.
-  </div>
-
   <div class="row g-3">
     {% for product in products %}
     <div class="col-md-6 col-lg-4">
@@ -105,10 +101,6 @@
 
 {% endif %}
 
-<!-- Info Note -->
-<div class="alert alert-light border mt-4">
-  <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> The transaction history feature is currently showing products with transactions. A detailed transaction log with dates, quantities, and types will be available in future updates.
-</div>
 
 {% endblock content %}
 
